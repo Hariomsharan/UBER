@@ -1,5 +1,7 @@
-import { React, useState } from "react";
-import { Link } from "react-router-dom";
+import { React, useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { UserDataContext } from "../Context/userContext";
 
 const UserSignup = () => {
   const [firstName, setFirstName] = useState("");
@@ -8,14 +10,33 @@ const UserSignup = () => {
   const [password, setPassword] = useState("");
   const [userData, setUserData] = useState({});
 
-  const submitHandler = (e) => {
+  const navigate = useNavigate();
+
+  const { user, setUser } = useContext(UserDataContext);
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    setUserData({
-      firstName,
-      lastName,
+    const newUser = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName,
+      },
       email,
       password,
-    });
+    };
+
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/users/register`,
+      newUser
+    );
+
+    if (response.status === 201) {
+      const data = response.data;
+      setUser(data.user);
+      localStorage.setItem('token', data.token);
+      navigate("/home");
+    }
+
     console.log(userData);
     setFirstName(""), setLastName(""), setEmail("");
     setPassword("");
@@ -75,7 +96,7 @@ const UserSignup = () => {
           <p>
             Already have a account?
             <Link to="/login" className="text-blue-600 font-medium">
-            login
+              login
             </Link>
           </p>
           <p>

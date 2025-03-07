@@ -1,5 +1,7 @@
-import { React, useState } from 'react'
-import { Link } from 'react-router-dom';
+import { React, useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { CaptainDataContext } from "../context/captainContext";
 
 const Captainsignup = () => {
   const [firstName, setFirstName] = useState("");
@@ -7,18 +9,47 @@ const Captainsignup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [captainData, setCaptainData] = useState({});
+  const [vehicleColor, setVehicleColor] = useState("");
+  const [vehiclePlate, setVehiclePlate] = useState("");
+  const [vehicleCapacity, setVehicleCapacity] = useState("");
+  const [vehicleType, setVehicleType] = useState("");
 
-  const submitHandler = (e) => {
+  const { captain, setCaptain } = useContext(CaptainDataContext);
+  const navigate = useNavigate();
+
+  const submitHandler = async (e) => {
     e.preventDefault();
-    setCaptainData({
-      firstName,
-      lastName,
+    const newCaptain = {
+      fullname: {
+        firstname: firstName,
+        lastname: lastName,
+      },
       email,
       password,
-    });
-    console.log(setCaptainData);
+      vehicle: {
+        color: vehicleColor,
+        plate: vehiclePlate,
+        capacity: vehicleCapacity,
+        vehicleType: vehicleType,
+      },
+    };
+
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/captains/register`,
+      newCaptain
+    );
+
+
+    if (response.status === 201) {
+      const data = response.data;
+      setCaptain(data.captain);
+      localStorage.setItem("token", data.token);
+      navigate("/captain-home");
+    }
+
     setFirstName(""), setLastName(""), setEmail("");
-    setPassword("");
+    setPassword(""), setVehicleColor(""), setVehiclePlate(""),
+    setVehicleCapacity(""), setVehicleType("");
   };
 
   return (
@@ -67,15 +98,56 @@ const Captainsignup = () => {
             type="password"
             placeholder="Password"
           />
+          <h3 className="text-lg font-medium mb-2">Vehicle Details</h3>
+          <div className="flex gap-2 mb-2">
+            <input
+              required
+              value={vehicleColor}
+              onChange={(e) => setVehicleColor(e.target.value)}
+              className="bg-[#eeeeee] w-1/2 outline-[#767676] rounded-md border px-4 py-2 text-lg placeholder:text-base"
+              type="text"
+              placeholder="Vehicle Color"
+            />
+            <input
+              required
+              value={vehiclePlate}
+              onChange={(e) => setVehiclePlate(e.target.value)}
+              className="bg-[#eeeeee] w-1/2 outline-[#767676] rounded-md border px-4 py-2 text-lg placeholder:text-base"
+              type="text"
+              placeholder="Vehicle Plate No."
+            />
+          </div>
+          <div className="flex gap-2">
+            <input
+              required
+              value={vehicleCapacity}
+              onChange={(e) => setVehicleCapacity(e.target.value)}
+              className="bg-[#eeeeee] w-1/2 outline-[#767676] mb-5 rounded-md border px-4 py-2 text-lg placeholder:text-base"
+              type="number"
+              placeholder="Vehicle Capacity"
+            />
+            <select
+              required
+              value={vehicleType}
+              onChange={(e) => setVehicleType(e.target.value)}
+              className="bg-[#eeeeee] w-1/2 outline-[#767676] mb-5 rounded-md border px-4 py-2 text-lg"
+            >
+              <option value="">Select Vehicle Type</option>
+              <option value="car">Car</option>
+              <option value="auto">Auto</option>
+              <option value="bike">Bike</option>
+            </select>
+          </div>
+
           <button className="bg-black text-white font-semibold mb-1 rounded-md border px-4 py-2 w-full text-lg placeholder:text-base">
-            SignUp
+            Captain SignUp
           </button>
         </form>
         <div className="flex flex-col">
           <p>
             Already have a account?
             <Link to="/captain-login" className="text-blue-600 font-medium">
-            login
+              login
             </Link>
           </p>
           <p>
@@ -95,6 +167,6 @@ const Captainsignup = () => {
       </div>
     </div>
   );
-}
+};
 
-export default Captainsignup
+export default Captainsignup;
