@@ -1,4 +1,4 @@
-import  { React, useContext, useEffect } from 'react'
+import  { React, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { CaptainDataContext } from '../context/captainContext';
 import axios from 'axios';
@@ -10,7 +10,7 @@ const CaptainProtectWrapper = ({
     const token = localStorage.getItem('token');
 
         const { captain, setCaptain } = useContext(CaptainDataContext);
-        const [isLoading, setIsLoading] = useContext(true);
+        const [isLoading, setIsLoading] = useState(true);
         const navigate = useNavigate();
     
         useEffect(() => {
