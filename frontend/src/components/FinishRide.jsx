@@ -1,15 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const ConfirmRidePopup = (props) => {
-
-  const submitHandler = (e) => {
-    e.preventDefault()
-  }
-
+const FinishRide = () => {
   return (
     <div>
-      <h3 className="text-xl font-semibold mb-2">Confirm Ride</h3>
+      <h3 className="text-xl font-semibold mb-2">Complete This Ride</h3>
       <div className="flex items-center justify-between p-3 bg-gray-100 rounded-lg">
         <div className="flex items-center space-x-2">
           <img
@@ -46,31 +41,16 @@ const ConfirmRidePopup = (props) => {
           </div>
         </div>
         <div className="w-full mt-6">
-          <form onSubmit={submitHandler}>
-          <input
-            required
-            className="bg-[#eeeeee] outline-[#767676] rounded-md border px-4 py-2 w-full text-lg placeholder:text-base"
-            type="number"
-            placeholder="Enter OTP"
-          />
-          <Link to={"/captain-riding"} className="w-full flex justify-center mt-4 bg-black text-white font-semibold p-3 rounded-lg">
-          Confirm Ride
-        </Link>
-        <button
-          onClick={() => {
-            props.setRidePopupPanel(false);
-            props.setConfirmRidePopupPanel(false);
-          }}
-          className="w-full mt-1 bg-red-600 text-white font-semibold p-3 rounded-lg"
-        >
-          Cancel
-        </button>
-          </form>
+            <Link
+              to={"/captain-riding"}
+              className="w-full flex justify-center mt-4 bg-black text-white font-semibold p-3 rounded-lg"
+            >
+              Complete Ride
+            </Link>
         </div>
-        
       </div>
     </div>
   );
 };
 
-export default ConfirmRidePopup;
+export default FinishRide;
