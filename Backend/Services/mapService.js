@@ -55,13 +55,13 @@ module.exports.getSuggestions = async (input) => {
   }
 
   const apiKey = process.env.GOOGLE_MAPS_API;
-  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${apiKey}`;
+  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${apiKey}&components=country:IN`;
   
   try {
     const response = await axios.get(url);
     console.log(response)
     if(response.data.status === 'OK'){
-      return response.data.predictions;
+      return response.data.predictions.map(prediction => prediction.description).filter(value => value);
     } else {
       throw new Error('Unable to fetch Suggestions');
     }

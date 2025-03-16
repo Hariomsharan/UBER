@@ -7,6 +7,7 @@ import VehiclePanel from "../components/VehiclePanel";
 import SearchingRide from "../components/SearchingRide";
 import ConfirmRide from "../components/ConfirmRide";
 import WaitingForDriver from "../components/WaitingForDriver";
+import axios from "axios";
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
@@ -21,11 +22,45 @@ const Home = () => {
   const [vehiclepanelOpen, setVehiclepanelOpen] = useState(false);
   const [confirmRidePanel, setConfirmRidePanel] = useState(false);
   const [searchingRidePanel, setSearchingRidePanel] = useState(false);
+  const [activeInput, setActiveInput] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
   const [waitingForDriverPanel, setWaitingForDriverPanel] = useState(false);
 
+  const [fares, setFares] = useState({ auto: 0, car: 0, moto: 0 });
   const submitHendler = (e) => {
     e.preventDefault();
     console.log("submit");
+  };
+
+  const handleInputChange = async (e, type) => {
+    const value = e.target.value;
+    if (type === "pickup") {
+      setPickup(value);
+    } else {
+      setDestination(value);
+    }
+    setActiveInput(type);
+
+    if (value.length > 2) {
+      try {
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/maps/get-suggestions?input=${value}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        setSuggestions(response.data);
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+        setSuggestions([]);
+      }
+    } else {
+      setSuggestions([]);
+    }
   };
 
   useGSAP(() => {
@@ -96,6 +131,23 @@ const Home = () => {
     }
   }, [waitingForDriverPanel]);
 
+  const findTrip = async () => {
+    setVehiclepanelOpen(true);
+    setOpenpanel(false);
+
+    const response = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/rides/get-fare`,
+      {
+        params: { pickup, destination },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+ 
+    setFares(response.data);
+  };
+
   return (
     <div className="h-screen relative overflow-hidden">
       <img
@@ -126,7 +178,7 @@ const Home = () => {
           <form onSubmit={(e) => submitHendler(e)}>
             <input
               onClick={() => setOpenpanel(true)}
-              onChange={(e) => setPickup(e.target.value)}
+              onChange={(e) => handleInputChange(e, "pickup")}
               value={pickup}
               className="bg-[#eee] px-10 py-2 w-full mt-5 rounded-lg text-lg"
               type="text"
@@ -134,18 +186,27 @@ const Home = () => {
             />
             <input
               onClick={() => setOpenpanel(true)}
-              onChange={(e) => setDestination(e.target.value)}
+              onChange={(e) => handleInputChange(e, "destination")}
               value={destination}
               className="bg-[#eee] px-10 py-2 w-full rounded-lg text-lg mt-4"
               type="text"
               placeholder="Enter your destination"
             />
           </form>
+          <button
+            onClick={findTrip}
+            className="bg-black text-white text-lg font-semibold w-full py-2 rounded-lg mt-5 "
+          >
+            Find Trip
+          </button>
         </div>
         <div ref={panelRef} className="bg-white h-0">
           <LocationSearchPanel
-            setOpenpanel={setOpenpanel}
-            setVehiclepanelOpen={setVehiclepanelOpen}
+            setPickup={setPickup}
+            setDestination={setDestination}
+            activeInput={activeInput}
+            suggestions={suggestions}
+            setSuggestions={setSuggestions}
           />
         </div>
       </div>
@@ -153,7 +214,7 @@ const Home = () => {
         ref={vehiclePanelRef}
         className="fixed z-10 bg-white bottom-0 px-3 py-8 w-full translate-y-full"
       >
-        <VehiclePanel setConfirmRidePanel={setConfirmRidePanel} />
+        <VehiclePanel setConfirmRidePanel={setConfirmRidePanel} fares={fares}/>
       </div>
       <div
         ref={confirmRidePanelRef}

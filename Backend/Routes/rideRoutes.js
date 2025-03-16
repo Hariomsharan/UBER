@@ -1,12 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { body } = require("express-validator");
-const { createRideController } = require("../Controllers/rideController");
-const  authMiddleware = require('../middlewares/authMiddleware')
+const { body, query } = require("express-validator");
+const {
+  createRideController,
+  getFareController,
+} = require("../Controllers/rideController");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 router.post(
   "/create",
-  authMiddleware.authUser, 
+  authMiddleware.authUser,
   body("pickup")
     .isString()
     .isLength({ min: 3 })
@@ -17,9 +20,23 @@ router.post(
     .withMessage("Invalid destination address"),
   body("vehicleType")
     .isString()
-    .isIn(['auto', 'car', 'motorcycle'])
+    .isIn(["auto", "car", "motorcycle"])
     .withMessage("Invalid vehicle type"),
   createRideController
+);
+
+router.get(
+  "/get-fare",
+  query("pickup")
+    .isString()
+    .isLength({ min: 3 })
+    .withMessage("Invalid pickup address"),
+  query("destination")
+    .isString()
+    .isLength({ min: 3 })
+    .withMessage("Invalid destination address"),
+  authMiddleware.authUser,
+  getFareController
 );
 
 module.exports = router;

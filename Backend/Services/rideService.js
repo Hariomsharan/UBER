@@ -8,6 +8,7 @@ const getFare = async (pickup, destination) => {
   }
 
   const distanceTime = await getDistanceTime(pickup, destination);
+  console.log(distanceTime);
 
   const baseFare = {
     auto: 50,
@@ -47,6 +48,9 @@ const getFare = async (pickup, destination) => {
   return fare;
 };
 
+module.exports.getFareService = getFare;
+
+
 const getOtp = (num) => {
     const generateOtp = (num) => {
         const otp = crypto.randomInt(Math.pow(10, num - 1), Math.pow(10, num)).toString();
@@ -78,3 +82,5 @@ module.exports.createRide = async ({
 
   return ride;
 };
+
+
