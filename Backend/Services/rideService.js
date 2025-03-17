@@ -11,21 +11,21 @@ const getFare = async (pickup, destination) => {
   console.log(distanceTime);
 
   const baseFare = {
-    auto: 50,
-    car: 100,
-    motorcycle: 30,
+    auto: 30,
+    car: 80,
+    motorcycle: 20,
   };
 
   const perKmRate = {
     auto: 10,
-    car: 20,
-    motorcycle: 15,
+    car: 15,
+    motorcycle: 5,
   };
 
   const perMinuteRate = {
     auto: 2,
-    car: 5,
-    motorcycle: 3,
+    car: 4,
+    motorcycle: 1,
   };
 
   const { distance, duration } = distanceTime;
@@ -34,16 +34,16 @@ const getFare = async (pickup, destination) => {
 
   const fare = {
     auto:
-      baseFare.auto +
+      Math.round(baseFare.auto +
       (distance.value / 1000) * perKmRate.auto +
-      (duration.value / 60) * perMinuteRate.auto,
+      (duration.value / 60) * perMinuteRate.auto),
     car:
-      (distance.value / 1000) * perKmRate.car +
-      (duration.value / 60) * perMinuteRate.car,
+    Math.round(baseFare.car + (distance.value / 1000) * perKmRate.car +
+      (duration.value / 60) * perMinuteRate.car),
     motorcycle:
-      baseFare.motorcycle +
+    Math.round(baseFare.motorcycle +
       (distance.value / 1000) * perKmRate.motorcycle +
-      (duration.value / 60) * perMinuteRate.motorcycle,
+      (duration.value / 60) * perMinuteRate.motorcycle),
   };
   return fare;
 };

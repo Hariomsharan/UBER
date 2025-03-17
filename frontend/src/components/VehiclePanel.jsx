@@ -1,11 +1,14 @@
 import React from "react";
 
-const VehiclePanel = ({ setConfirmRidePanel, fares }) => {   
+const VehiclePanel = (props) => {   
   
   return (
     <div>
       <div
-        onClick={() => setConfirmRidePanel(true)}
+        onClick={() => {
+          props.setConfirmRidePanel(true)
+          props.setVehicleType('car')
+        }}
         className="flex w-full p-3 border-2 mb-2 active:border-black bg-gray-200 rounded-lg items-center justify-between"
       >
         <img
@@ -23,12 +26,15 @@ const VehiclePanel = ({ setConfirmRidePanel, fares }) => {
           <h5 className="text-lg font-normal">2 min away</h5>
           <p className="font-light text-sm">Affordable, Compact rides</p>
         </div>
-        <h2 className="text-xl font-semibold">₹{Math.trunc(fares.car)}</h2>
+        <h2 className="text-xl font-semibold">₹{props.fares.car}</h2>
         {/* <h2 className="text-xl font-semibold">₹190</h2> */}
 
       </div>
       <div
-        onClick={() => setConfirmRidePanel(true)}
+        onClick={() => {
+          props.setConfirmRidePanel(true)
+          props.setVehicleType('motorcycle')
+        }}
         className="flex w-full p-3 border-2 mb-2 active:border-black bg-gray-200 rounded-lg items-center justify-between"
       >
         <img
@@ -46,11 +52,14 @@ const VehiclePanel = ({ setConfirmRidePanel, fares }) => {
           <h5 className="text-lg font-normal">2 min away</h5>
           <p className="font-light text-sm">Affordable motorcycle rides</p>
         </div>
-        <h2 className="text-xl font-semibold">₹{Math.trunc(fares.motorcycle)}</h2>
+        <h2 className="text-xl font-semibold">₹{props.fares.motorcycle}</h2>
         {/* <h2 className="text-xl font-semibold">₹100</h2> */}
       </div>
       <div
-        onClick={() => setConfirmRidePanel(true)}
+        onClick={() => {
+          props.setConfirmRidePanel(true)
+          props.setVehicleType('auto')
+        }}
         className="flex w-full p-3 border-2 mb-2 active:border-black bg-gray-200 rounded-lg items-center justify-between"
       >
         <img
@@ -70,11 +79,14 @@ const VehiclePanel = ({ setConfirmRidePanel, fares }) => {
             Comfortable sedans, top quelity drivers
           </p>
         </div>
-        <h2 className="text-xl font-semibold">₹{Math.trunc(fares.car)}</h2>
+        <h2 className="text-xl font-semibold">₹{props.fares.car}</h2>
         {/* <h2 className="text-xl font-semibold">₹300</h2> */}
       </div>
       <div
-        onClick={() => setConfirmRidePanel(true)}
+        onClick={() => {
+          props.setConfirmRidePanel(true)
+          props.setVehicleType('auto')
+        }}
         className="flex w-full p-3 border-2 mb-2 active:border-black bg-gray-200 rounded-lg items-center justify-between"
       >
         <img
@@ -92,7 +104,7 @@ const VehiclePanel = ({ setConfirmRidePanel, fares }) => {
           <h5 className="text-lg font-normal">2 min away</h5>
           <p className="font-light text-sm">Affordable auto rides</p>
         </div>
-        <h2 className="text-xl font-semibold">₹{Math.trunc(fares.auto)}</h2>
+        <h2 className="text-xl font-semibold">₹{props.fares.auto}</h2>
         {/* <h2 className="text-xl font-semibold">₹150</h2> */}
       </div>
     </div>

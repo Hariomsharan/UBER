@@ -25,6 +25,8 @@ const Home = () => {
   const [activeInput, setActiveInput] = useState(null);
   const [suggestions, setSuggestions] = useState([]);
   const [waitingForDriverPanel, setWaitingForDriverPanel] = useState(false);
+  const [vehicleType, setVehicleType] = useState(null);
+  const [rideDetails, setRideDetails] = useState(null);
 
   const [fares, setFares] = useState({ auto: 0, car: 0, moto: 0 });
   const submitHendler = (e) => {
@@ -144,8 +146,26 @@ const Home = () => {
         },
       }
     );
- 
+
     setFares(response.data);
+  };
+
+  const createRide = async () => {
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/rides/create`,
+      {
+        pickup,
+        destination,
+        vehicleType,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    setRideDetails(response.data);
   };
 
   return (
@@ -214,19 +234,35 @@ const Home = () => {
         ref={vehiclePanelRef}
         className="fixed z-10 bg-white bottom-0 px-3 py-8 w-full translate-y-full"
       >
-        <VehiclePanel setConfirmRidePanel={setConfirmRidePanel} fares={fares}/>
+        <VehiclePanel
+          setVehicleType={setVehicleType}
+          setConfirmRidePanel={setConfirmRidePanel}
+          fares={fares}
+        />
       </div>
       <div
         ref={confirmRidePanelRef}
         className="fixed z-10 bg-white bottom-0 px-3 py-6 pt-12 w-full translate-y-full"
       >
-        <ConfirmRide setSearchingRidePanel={setSearchingRidePanel} />
+        <ConfirmRide
+          setSearchingRidePanel={setSearchingRidePanel}
+          createRide={createRide}
+          pickup={pickup}
+          destination={destination}
+          vehicleType={vehicleType}
+          fares={fares}
+        />
       </div>
       <div
         ref={searchingRidePanelRef}
         className="fixed z-10 bg-white bottom-0 px-3 py-6 pt-12 w-full translate-y-full"
       >
-        <SearchingRide />
+        <SearchingRide
+          pickup={pickup}
+          destination={destination}
+          fares={fares}
+          vehicleType={vehicleType}
+        />
       </div>
       <div
         ref={waitingForDriverPanelRef}

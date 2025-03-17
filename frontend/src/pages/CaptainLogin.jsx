@@ -1,42 +1,39 @@
 import { React, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { CaptainDataContext } from "../context/captainContext";
+import { CaptainDataContext } from "../Context/captainContext";
 
 const CaptainLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [captainData, setCaptainData] = useState({});
 
   const { captain, setCaptain } = useContext(CaptainDataContext);
   const navigate = useNavigate();
 
-
   const submitHandler = async (e) => {
     e.preventDefault();
-    const captainData ={
+    const captainData = {
       email,
       password,
     };
 
     const response = await axios.post(
-      `${import.meta.env.VITE_BASE_URL}/captains/login`, captainData
+      `${import.meta.env.VITE_BASE_URL}/captains/login`,
+      captainData
     );
 
     console.log(response);
 
-    if(response.status === 200){
-      const data = response.data;
-      setCaptain(data.captain);
-      localStorage.setItem('token', data.token);
+    if (response.status === 200) {
+      setCaptain(response.data.captain);
+      localStorage.setItem("token", response.data.token);
       navigate("/captain-home");
-    } 
+    }
 
     console.log(captainData);
     setEmail("");
     setPassword("");
   };
-
   return (
     <div className="p-7 h-screen flex flex-col justify-between">
       <div>

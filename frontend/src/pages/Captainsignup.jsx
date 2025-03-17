@@ -1,7 +1,7 @@
 import { React, useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { CaptainDataContext } from "../context/captainContext";
+import { CaptainDataContext } from "../Context/captainContext"
 
 const Captainsignup = () => {
   const [firstName, setFirstName] = useState("");
@@ -41,9 +41,8 @@ const Captainsignup = () => {
 
 
     if (response.status === 201) {
-      const data = response.data;
-      setCaptain(data.captain);
-      localStorage.setItem("token", data.token);
+      setCaptain(response.data.captain);
+      localStorage.setItem("token", response.data.token);
       navigate("/captain-home");
     }
 
