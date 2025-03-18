@@ -1,4 +1,4 @@
-import { React, useRef, useState } from "react";
+import { React, useRef, useState, useEffect, useContext } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import "remixicon/fonts/remixicon.css";
@@ -7,7 +7,10 @@ import VehiclePanel from "../components/VehiclePanel";
 import SearchingRide from "../components/SearchingRide";
 import ConfirmRide from "../components/ConfirmRide";
 import WaitingForDriver from "../components/WaitingForDriver";
+import { SocketContext } from "../Context/socketContext";
+import { UserDataContext } from "../Context/userContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
@@ -27,8 +30,17 @@ const Home = () => {
   const [waitingForDriverPanel, setWaitingForDriverPanel] = useState(false);
   const [vehicleType, setVehicleType] = useState(null);
   const [rideDetails, setRideDetails] = useState(null);
-
   const [fares, setFares] = useState({ auto: 0, car: 0, moto: 0 });
+
+  const navigate = useNavigate();
+
+  const { user } = useContext(UserDataContext);
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+    socket.emit('join', {userType: 'user', userId: user._id});
+  }, []);
+
   const submitHendler = (e) => {
     e.preventDefault();
     console.log("submit");

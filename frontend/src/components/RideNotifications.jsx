@@ -11,10 +11,10 @@ const RideNotifications = (props) => {
             src="https://images.pexels.com/photos/7562313/pexels-photo-7562313.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
             alt=""
           />
-          <h2 className="text-lg font-semibold">Hariom Sharan</h2>
+          <h2 className="text-lg font-semibold">{props.ride?.user.fullname.firstname + " " + props.ride?.user.fullname.lastname}</h2>
         </div>
         <div className="text-center">
-          <h4 className="text-lg font-semibold">₹295.2</h4>
+          <h4 className="text-lg font-semibold">₹{props.ride?.fare}</h4>
           <p className="text-xs font-medium text-gray-400">2.2 km</p>
         </div>
       </div>
@@ -25,7 +25,7 @@ const RideNotifications = (props) => {
             <div>
               <h3 className="text-lg font-medium">567/11-A</h3>
               <p className="text-sm font-medium -mt-1 text-gray-600">
-                Kankariya Talab, Ahamdabaad
+                {props.ride?.pickup}
               </p>
             </div>
           </div>
@@ -34,7 +34,7 @@ const RideNotifications = (props) => {
             <div>
               <h3 className="text-lg font-medium">245/71-C</h3>
               <p className="text-sm font-medium -mt-1 text-gray-600">
-                Some Mall, Ahamdabaad
+                {props.ride?.destination}
               </p>
             </div>
           </div>

@@ -1,4 +1,5 @@
 const axios = require("axios");
+const captainModel = require("../models/captainModel");
 
 module.exports.getAddressCoordinates = async (address) => {
   const apiKey = process.env.GOOGLE_MAPS_API;
@@ -8,11 +9,10 @@ module.exports.getAddressCoordinates = async (address) => {
 
   try {
     const response = await axios.get(url);
-    console.log(response)
     if (response.data.status === "OK") {
       const location = response.data.results[0].geometry.location;
       return {
-        lat: location.lat,
+        ltd: location.lat,
         lng: location.lng,
       };
     } else {
@@ -30,7 +30,9 @@ module.exports.getDistanceTime = async (origin, destination) => {
   }
 
   const apiKey = process.env.GOOGLE_MAPS_API;
-  const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`;
+  const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${encodeURIComponent(
+    origin
+  )}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`;
   try {
     const response = await axios.get(url);
     if (response.data.status === "OK") {
@@ -48,26 +50,39 @@ module.exports.getDistanceTime = async (origin, destination) => {
   }
 };
 
-
 module.exports.getSuggestions = async (input) => {
-  if(!input){
-    throw new Error('query is required');
+  if (!input) {
+    throw new Error("query is required");
   }
 
   const apiKey = process.env.GOOGLE_MAPS_API;
-  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&key=${apiKey}&components=country:IN`;
-  
+  const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
+    input
+  )}&key=${apiKey}&components=country:IN`;
+
   try {
     const response = await axios.get(url);
-    console.log(response)
-    if(response.data.status === 'OK'){
-      return response.data.predictions.map(prediction => prediction.description).filter(value => value);
+    if (response.data.status === "OK") {
+      return response.data.predictions
+        .map((prediction) => prediction.description)
+        .filter((value) => value);
     } else {
-      throw new Error('Unable to fetch Suggestions');
+      throw new Error("Unable to fetch Suggestions");
     }
-    
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw error;
   }
-}
+};
+
+module.exports.getCaptainsInTheRadius = async (ltd, lng, radius) => {
+  const captains = await captainModel.find({
+    location: {
+      $geoWithin: {
+        $centerSphere: [[ltd, lng], radius / 6371],
+      },
+    },
+  });
+
+  return captains;
+};
