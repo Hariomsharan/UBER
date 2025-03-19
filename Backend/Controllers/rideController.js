@@ -1,4 +1,4 @@
-const { createRide, getFareService } = require("../Services/rideService");
+const { createRide, getFareService, confirmRideService, startRideService } = require("../Services/rideService");
 const { validationResult } = require("express-validator");
 const { getCaptainsInTheRadius, getAddressCoordinates } = require('../Services/mapService')
 const { sendMessageToSocketId } = require("../socket")
@@ -10,9 +10,10 @@ module.exports.createRideController = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { pickup, destination, vehicleType } = req.body;
+  const {userId, pickup, destination, vehicleType } = req.body;
   try {
-    const ride = await createRide({
+  console.log(req.user)
+    const ride = await createRide({ 
       user: req.user._id,
       pickup,
       destination,
@@ -36,6 +37,7 @@ module.exports.createRideController = async (req, res) => {
     })
 
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ message: error.message });
   }
 };
@@ -54,3 +56,49 @@ module.exports.getFareController = async (req, res) => {
     return res.status(400).json({ message: error.message });
   }
 };
+
+
+module.exports.confirmRideController = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { rideId } = req.body;
+  try {
+    console.log(req.captain)
+    const ride = await confirmRideService({ rideId, captain: req.captain });
+
+    sendMessageToSocketId(ride.user.socketId, {
+      event: "ride-confirmed",
+      data: ride
+    })
+
+    res.status(200).json(ride);
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ message: error.message });
+  }
+}
+
+module.exports.startRideController = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { rideId, otp } = req.query;
+  try {    
+    const ride = await startRideService({ rideId, captain: req.captain });
+
+    sendMessageToSocketId(ride.user.socketId, {
+      event: "ride-started",
+      data: ride
+    })
+
+    res.status(200).json(ride);
+  } catch (error) {
+    console.log(error);    
+    return res.status(400).json({ message: error.message });
+  }
+}

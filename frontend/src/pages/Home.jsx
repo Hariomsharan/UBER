@@ -31,6 +31,7 @@ const Home = () => {
   const [vehicleType, setVehicleType] = useState(null);
   const [rideDetails, setRideDetails] = useState(null);
   const [fares, setFares] = useState({ auto: 0, car: 0, moto: 0 });
+  const [ride, setRide] = useState(null)
 
   const navigate = useNavigate();
 
@@ -40,6 +41,13 @@ const Home = () => {
   useEffect(() => {
     socket.emit('join', {userType: 'user', userId: user._id});
   }, []);
+
+  socket.on('ride-confirmed', ride => {
+    console.log(ride)
+    setSearchingRidePanel(false)
+    setWaitingForDriverPanel(true)
+    setRide(ride)
+  })
 
   const submitHendler = (e) => {
     e.preventDefault();
@@ -280,7 +288,7 @@ const Home = () => {
         ref={waitingForDriverPanelRef}
         className="fixed z-10 bg-white bottom-0 px-3 py-6 pt-12 w-full"
       >
-        <WaitingForDriver />
+        <WaitingForDriver ride={ride} />
       </div>
     </div>
   );

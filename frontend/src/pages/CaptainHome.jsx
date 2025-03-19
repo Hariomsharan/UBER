@@ -7,6 +7,7 @@ import gsap from "gsap";
 import ConfirmRidePopup from "../components/ConfirmRidePopup";
 import { CaptainDataContext } from "../Context/captainContext";
 import { SocketContext } from "../Context/socketContext";
+import axios from "axios";
 
 const CaptainHome = () => {
   const [ridePopupPanel, setRidePopupPanel] = useState(false);
@@ -48,6 +49,21 @@ const CaptainHome = () => {
     setRide(data)
     setRidePopupPanel(true)
   })
+
+  const confirmRide = async () => {
+    const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/rides/confirm`, {
+        rideId: ride._id,
+        captainId: captain._id,
+        
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      setRidePopupPanel(false)
+      setConfirmRidePopupPanel(true)
+  }
 
   useGSAP(() => {
     if (ridePopupPanel) {
@@ -107,6 +123,7 @@ const CaptainHome = () => {
           ride={ride}
           setRidePopupPanel={setRidePopupPanel}
           setConfirmRidePopupPanel={setConfirmRidePopupPanel}
+          confirmRide={confirmRide}
         />
       </div>
       <div
@@ -114,6 +131,7 @@ const CaptainHome = () => {
         className="fixed z-10 h-screen bg-white bottom-0 px-3 py-6 pt-4 w-full translate-y-full"
       >
         <ConfirmRidePopup
+          ride={ride}
           setRidePopupPanel={setRidePopupPanel}
           setConfirmRidePopupPanel={setConfirmRidePopupPanel}
         />

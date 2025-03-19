@@ -4,6 +4,8 @@ const { body, query } = require("express-validator");
 const {
   createRideController,
   getFareController,
+  confirmRideController,
+  startRideController
 } = require("../Controllers/rideController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
@@ -38,5 +40,19 @@ router.get(
   authMiddleware.authUser,
   getFareController
 );
+
+router.post(
+  "/confirm",
+  authMiddleware.authCaptain,
+  body("rideId").isMongoId().withMessage("Invalid ride id"),
+  confirmRideController
+);
+
+router.get('/start-ride', 
+  authMiddleware.authCaptain,
+  query('rideId').isMongoId().withMessage('Invalid ride id'),
+  query('otp').isString().isLength({min: 4, max: 4}).withMessage('Invalid otp'),
+  startRideController
+)
 
 module.exports = router;

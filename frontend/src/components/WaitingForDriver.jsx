@@ -1,10 +1,10 @@
 import React from "react";
 
-const WaitingForDriver = () => {
+const WaitingForDriver = (props) => {
   return (
     <div>
-      <h3 className="text-2xl font-semibold mb-5">
-        Looking for nearby drivers
+      <h3 className="text-2xl font-semibold mb-5 text-blue-700">
+        OTP : {props.ride?.otp}
       </h3>
       <div className="flex items-center justify-between px-5">
       <img
@@ -18,8 +18,8 @@ const WaitingForDriver = () => {
           alt=""
         />
         <div className="text-right">
-          <h2 className="text-base font-medium">Hariom Sharan</h2>
-          <h4 className="text-lg font-semibold">MP04 CD 2244</h4>
+          <h2 className="text-base font-medium">{props.ride?.captain.fullname.firstname}</h2>
+          <h4 className="text-lg font-semibold">{props.ride?.captain.vehicle.plate}</h4>
           <p className="text-sm font-medium text-gray-600">Maruti Suzuki Alto</p>
         </div>
       </div>
@@ -30,7 +30,7 @@ const WaitingForDriver = () => {
             <div>
               <h3 className="text-lg font-medium">567/11-A</h3>
               <p className="text-sm font-medium -mt-1 text-gray-600">
-                Kankariya Talab, Ahamdabaad
+                {props.ride?.pickup}
               </p>
             </div>
           </div>
@@ -39,14 +39,14 @@ const WaitingForDriver = () => {
             <div>
               <h3 className="text-lg font-medium">245/71-C</h3>
               <p className="text-sm font-medium -mt-1 text-gray-600">
-                Some Mall, Ahamdabaad
+                {props.ride?.destination}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-5 p-2 border-t border-gray-300">
             <i className="text-lg ri-money-rupee-circle-fill"></i>
             <div>
-              <h3 className="text-lg font-medium">₹190.22</h3>
+              <h3 className="text-lg font-medium">₹{props.ride?.fare}</h3>
               <p className="text-sm font-medium -mt-1 text-gray-600">Cash</p>
             </div>
           </div>

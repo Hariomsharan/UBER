@@ -11,7 +11,11 @@ const RideNotifications = (props) => {
             src="https://images.pexels.com/photos/7562313/pexels-photo-7562313.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
             alt=""
           />
-          <h2 className="text-lg font-semibold">{props.ride?.user.fullname.firstname + " " + props.ride?.user.fullname.lastname}</h2>
+          <h2 className="text-lg font-semibold">
+            {props.ride?.user.fullname.firstname +
+              " " +
+              props.ride?.user.fullname.lastname}
+          </h2>
         </div>
         <div className="text-center">
           <h4 className="text-lg font-semibold">₹{props.ride?.fare}</h4>
@@ -39,10 +43,19 @@ const RideNotifications = (props) => {
             </div>
           </div>
         </div>
-        <button onClick={() => props.setConfirmRidePopupPanel(true)} className="w-full mt-4 bg-black text-white font-semibold p-3 rounded-lg">
+        <button
+          onClick={() => {
+            props.setConfirmRidePopupPanel(true);
+            props.confirmRide();
+          }}
+          className="w-full mt-4 bg-black text-white font-semibold p-3 rounded-lg"
+        >
           Accept
         </button>
-        <button onClick={() => props.setRidePopupPanel(false)} className="w-full mt-1 bg-gray-200 text-gray-700 font-semibold p-3 rounded-lg">
+        <button
+          onClick={() => props.setRidePopupPanel(false)}
+          className="w-full mt-1 bg-gray-200 text-gray-700 font-semibold p-3 rounded-lg"
+        >
           Ignore
         </button>
       </div>
