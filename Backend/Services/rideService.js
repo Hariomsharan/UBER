@@ -1,6 +1,7 @@
 const rideModel = require("../models/rideModel");
 const { getDistanceTime } = require("../Services/mapService");
 const crypto = require("crypto");
+const {} = "./";
 
 const getFare = async (pickup, destination) => {
   if (!pickup || !destination) {
@@ -87,8 +88,8 @@ module.exports.createRide = async ({
   return ride;
 };
 
-module.exports.confirmRideService = async ({rideId, captain}) => {
-  console.log(captain)
+module.exports.confirmRideService = async ({ rideId, captain }) => {
+  console.log(captain);
   if (!rideId) {
     throw new Error("Ride id is required");
   }
@@ -105,9 +106,11 @@ module.exports.confirmRideService = async ({rideId, captain}) => {
 
   const ride = await rideModel
     .findOne({
-      _id: rideId
+      _id: rideId,
     })
-    .populate('user').populate('captain').select('+otp');
+    .populate("user")
+    .populate("captain")
+    .select("+otp");
 
   if (!ride) {
     throw new Error("Ride not found");
@@ -116,8 +119,7 @@ module.exports.confirmRideService = async ({rideId, captain}) => {
   return ride;
 };
 
-
-module.exports.startRideService = async ({rideId, otp, captain}) => {
+module.exports.startRideService = async ({ rideId, otp, captain }) => {
   if (!rideId) {
     throw new Error("Ride id is required");
   }
@@ -125,17 +127,24 @@ module.exports.startRideService = async ({rideId, otp, captain}) => {
     .findOne({
       _id: rideId,
     })
-    .populate('user').populate('captain').select('+otp');
+    .populate("user")
+    .populate("captain")
+    .select("+otp");
 
   if (!ride) {
-    throw new Error("Ride not found or invalid otp");
+    throw new Error("Ride not found");
   }
 
   if (ride.status !== "accepted") {
     throw new Error("Ride is not accepted");
   }
 
-  if (ride.captain.toString() !== captain._id.toString()) {
+  console.log(ride.captain);
+  if (ride.otp !== otp) {
+    throw new Error("Invalid OTP");
+  }
+
+  if (ride.captain._id.toString() !== captain._id.toString()) {
     throw new Error("Captain is not assigned to this ride");
   }
 
@@ -149,4 +158,31 @@ module.exports.startRideService = async ({rideId, otp, captain}) => {
   );
 
   return ride;
-}
+};
+
+module.exports.endRideService = async ({ rideId, captain }) => {
+  if (!rideId) {
+    throw new Error("Ride id is required");
+  }
+
+  const ride = await rideModel.findOne({
+    _id: rideId,
+  }).populate("user").populate("captain");
+
+  if (!ride) {
+    throw new Error("Ride not found");
+  }
+
+  if (ride.status !== "ongoing") {
+    throw new Error("Ride is not ongoing");
+  }
+  console.log(captain,ride.captain._id)
+
+  if (ride.captain._id.toString() !== captain._id.toString()) {
+    throw new Error("Captain is not assigned to this ride");
+  }
+
+  await rideModel.findOneAndUpdate({ _id: rideId }, { status: "completed" });
+
+  return ride;
+};

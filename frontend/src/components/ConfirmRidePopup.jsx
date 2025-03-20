@@ -1,10 +1,32 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const ConfirmRidePopup = (props) => {
 
-  const submitHandler = (e) => {
+  const [otp, setOtp] = useState("");
+
+  const navigate = useNavigate();
+
+  const submitHandler = async (e) => {
     e.preventDefault()
+
+    const response = await axios.get(
+      `${import.meta.env.VITE_BASE_URL}/rides/start-ride`,{
+        params: {
+          rideId: props.ride._id,
+          otp: otp
+        },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+      }
+  });
+  console.log(response.data);
+  if (response.status === 200) {
+    props.setConfirmRidePopupPanel(false)
+    props.setRidePopupPanel(false)
+    navigate('/captain-riding', { state: { ride: props.ride } })
+}
   }
 
   return (
@@ -49,13 +71,15 @@ const ConfirmRidePopup = (props) => {
           <form onSubmit={submitHandler}>
           <input
             required
+            onChange={(e) => setOtp(e.target.value)}
+            value={otp}
             className="bg-[#eeeeee] outline-[#767676] rounded-md border px-4 py-2 w-full text-lg placeholder:text-base"
             type="number"
             placeholder="Enter OTP"
           />
-          <Link to={"/captain-riding"} className="w-full flex justify-center mt-4 bg-black text-white font-semibold p-3 rounded-lg">
+          <button className="w-full flex justify-center mt-4 bg-black text-white font-semibold p-3 rounded-lg">
           Confirm Ride
-        </Link>
+        </button>
         <button
           onClick={() => {
             props.setRidePopupPanel(false);

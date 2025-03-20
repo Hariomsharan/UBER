@@ -1,12 +1,15 @@
 import { React, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import FinishRide from "../components/FinishRide";
+import LiveTracking from "../components/LiveTracking";
 
 const CaptainRiding = () => {
   const [finishRidePanel, setFinishRidePanel] = useState(false);
   const finishRidePanelRef = useRef(null);
+  const location = useLocation();
+  const rideData = location.state?.ride;
 
   useGSAP(() => {
     if (finishRidePanel) {
@@ -37,13 +40,12 @@ const CaptainRiding = () => {
       </div>
 
       <div className="h-4/5">
-        <img
-          className="h-full w-full object-cover"
-          src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"
-          alt=""
-        />
+      <LiveTracking />
       </div>
-      <div onClick={() => setFinishRidePanel(true)} className="h-1/5 p-6 flex items-center justify-between bg-green-300 relative">
+      <div
+        onClick={() => setFinishRidePanel(true)}
+        className="h-1/5 p-6 flex items-center justify-between bg-green-300 relative"
+      >
         <h5
           className="p-1 text-center w-[90%] absolute top-0"
           onClick={() => {}}
@@ -51,7 +53,7 @@ const CaptainRiding = () => {
           <i className="text-3xl text-gray-800 ri-arrow-up-wide-line"></i>
         </h5>
         <h4 className="text-lg font-semibold">3 km away</h4>
-        <button  className=" mt-4 bg-black text-white font-semibold p-3 px-10 rounded-lg">
+        <button className=" mt-4 bg-black text-white font-semibold p-3 px-10 rounded-lg">
           Complete Ride
         </button>
       </div>
@@ -59,7 +61,10 @@ const CaptainRiding = () => {
         ref={finishRidePanelRef}
         className="fixed z-10 h-screen bg-white bottom-0 px-3 py-6 pt-4 w-full translate-y-full"
       >
-        <FinishRide />
+        <FinishRide
+          rideData={rideData}
+          setFinishRidePanel={setFinishRidePanel}
+        />
       </div>
     </div>
   );

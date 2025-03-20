@@ -27,6 +27,7 @@ const UserProtectWrapper = ({ children }) => {
       }
     })
     .catch((error) => {
+      console.log(error);
       navigate("/login");
     });
   }, [token]);

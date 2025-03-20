@@ -1,20 +1,29 @@
-import React from "react";
-import { Link } from "react-router-dom"
+import { React, useEffect, useContext} from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { SocketContext } from "../Context/socketContext"
+import LiveTracking from "../components/LiveTracking";
 
 const Riding = () => {
+
+  const location = useLocation();
+  const { ride } = location.state || {}
+  const navigate = useNavigate()
+
+  const { socket } = useContext(SocketContext)
+
+  socket.on('ride-ended', () => {
+    navigate('/home')
+  })
+
   return (
-    <div className="h-screen">
+    <div className="h-screen relative">
     <Link to={"/home"} className="fixed flex items-center justify-center h-10 w-10 bg-white rounded-full right-2 top-2">
     <i className="text-lg font-semibold ri-home-9-line"></i>
     </Link>
       <div className="h-1/2">
-        <img
-          className="h-full w-full object-cover"
-          src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"
-          alt=""
-        />
+      <LiveTracking/>
       </div>
-      <div className="h-1/2 p-4">
+      <div className="h-1/2 p-4 absolute bg-white">
         <div className="flex items-center justify-between px-5">
           <img
             className="h-20 w-20 rounded-full absolute left-3 "
@@ -27,8 +36,8 @@ const Riding = () => {
             alt=""
           />
           <div className="text-right">
-            <h2 className="text-base font-medium">Hariom Sharan</h2>
-            <h4 className="text-lg font-semibold">MP04 CD 2244</h4>
+            <h2 className="text-base font-medium">{ride.captain.fullname.firstname + " " + ride.captain.fullname.lastname}</h2>
+            <h4 className="text-lg font-semibold">{ride.captain.vehicle.plate}</h4>
             <p className="text-sm font-medium text-gray-600">
               Maruti Suzuki Alto
             </p>
@@ -41,7 +50,7 @@ const Riding = () => {
               <div>
                 <h3 className="text-lg font-medium">567/11-A</h3>
                 <p className="text-sm font-medium -mt-1 text-gray-600">
-                  Kankariya Talab, Ahamdabaad
+                  {ride.pickup}
                 </p>
               </div>
             </div>
@@ -50,14 +59,14 @@ const Riding = () => {
               <div>
                 <h3 className="text-lg font-medium">245/71-C</h3>
                 <p className="text-sm font-medium -mt-1 text-gray-600">
-                  Some Mall, Ahamdabaad
+                {ride.destination}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-5 p-2 border-t border-gray-300">
               <i className="text-lg ri-money-rupee-circle-fill"></i>
               <div>
-                <h3 className="text-lg font-medium">₹190.22</h3>
+                <h3 className="text-lg font-medium">₹{ride.fare}</h3>
                 <p className="text-sm font-medium -mt-1 text-gray-600">Cash</p>
               </div>
             </div>

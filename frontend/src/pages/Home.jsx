@@ -11,6 +11,7 @@ import { SocketContext } from "../Context/socketContext";
 import { UserDataContext } from "../Context/userContext";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import LiveTracking from "../components/LiveTracking";
 
 const Home = () => {
   const [pickup, setPickup] = useState("");
@@ -43,10 +44,14 @@ const Home = () => {
   }, []);
 
   socket.on('ride-confirmed', ride => {
-    console.log(ride)
     setSearchingRidePanel(false)
     setWaitingForDriverPanel(true)
     setRide(ride)
+  })
+
+  socket.on('ride-started', ride => {
+    setWaitingForDriverPanel(false)
+    navigate('/riding', {state: { ride }})
   })
 
   const submitHendler = (e) => {
@@ -197,14 +202,10 @@ const Home = () => {
       />
 
       <div className="h-screen w-screen">
-        <img
-          className="h-full w-full object-cover"
-          src="https://miro.medium.com/v2/resize:fit:1400/0*gwMx05pqII5hbfmX.gif"
-          alt=""
-        />
+        <LiveTracking/>
       </div>
-      <div className="h-screen w-full flex flex-col justify-end absolute top-0">
-        <div className="h-[25%] bg-white p-5 relative">
+      <div className="h-full w-full flex flex-col justify-end absolute top-0">
+        <div className="h-[30%] bg-white p-5 relative">
           <h5
             ref={panelCloseRef}
             onClick={() => {

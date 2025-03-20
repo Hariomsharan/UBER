@@ -4,7 +4,7 @@ const SearchingRide = (props) => {
   return (
     <div>
       <h3 className="text-2xl font-semibold mb-5">
-        Looking for nearby drivers
+        {/* Looking for nearby drivers */}
       </h3>
       <div className="flex items-center justify-between flex-col gap-2">
         <img

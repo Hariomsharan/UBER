@@ -1,7 +1,31 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 
-const FinishRide = () => {
+const FinishRide = (props) => {
+
+  const navigate = useNavigate();
+
+  const finishRide = async () => {
+    const response = await axios.post(
+      `${import.meta.env.VITE_BASE_URL}/rides/end-ride`,
+      {
+        rideId: props.rideData._id,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    console.log(response.status)
+
+    if (response.status === 200) {
+      navigate('/captain-home')
+  }
+  };
+
   return (
     <div>
       <h3 className="text-xl font-semibold mb-2">Complete This Ride</h3>
@@ -12,10 +36,14 @@ const FinishRide = () => {
             src="https://images.pexels.com/photos/7562313/pexels-photo-7562313.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
             alt=""
           />
-          <h2 className="text-lg font-semibold">Hariom Sharan</h2>
+          <h2 className="text-lg font-semibold">
+            {props.rideData.user.fullname.firstname +
+              " " +
+              props.rideData.user.fullname.lastname}
+          </h2>
         </div>
         <div className="text-center">
-          <h4 className="text-lg font-semibold">₹295.2</h4>
+          <h4 className="text-lg font-semibold">₹{props.rideData.fare}</h4>
           <p className="text-xs font-medium text-gray-400">2.2 km</p>
         </div>
       </div>
@@ -26,7 +54,7 @@ const FinishRide = () => {
             <div>
               <h3 className="text-lg font-medium">567/11-A</h3>
               <p className="text-sm font-medium -mt-1 text-gray-600">
-                Kankariya Talab, Ahamdabaad
+                {props.rideData.pickup}
               </p>
             </div>
           </div>
@@ -35,18 +63,18 @@ const FinishRide = () => {
             <div>
               <h3 className="text-lg font-medium">245/71-C</h3>
               <p className="text-sm font-medium -mt-1 text-gray-600">
-                Some Mall, Ahamdabaad
+                {props.rideData.destination}
               </p>
             </div>
           </div>
         </div>
         <div className="w-full mt-6">
-            <Link
-              to={"/captain-riding"}
-              className="w-full flex justify-center mt-4 bg-black text-white font-semibold p-3 rounded-lg"
-            >
-              Complete Ride
-            </Link>
+          <button
+            onClick={finishRide}
+            className="w-full flex justify-center mt-4 bg-black text-white font-semibold p-3 rounded-lg"
+          >
+            Complete Ride
+          </button>
         </div>
       </div>
     </div>
