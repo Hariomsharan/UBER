@@ -21,7 +21,7 @@ const Riding = () => {
     <i className="text-lg font-semibold ri-home-9-line"></i>
     </Link>
       <div className="h-1/2">
-      <LiveTracking/>
+      <LiveTracking pickup={ride.pickup} destination={ride.destination}/>
       </div>
       <div className="h-1/2 p-4 absolute bg-white">
         <div className="flex items-center justify-between px-5">
