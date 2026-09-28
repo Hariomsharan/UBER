@@ -1,10 +1,28 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 // import ArrowRightLine from 'remixicon-react/ArrowRightLine';
 
 const Start = () => {
+  const [showAlert, setShowAlert] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setShowAlert(window.innerWidth > 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
   return (
     <div>
+      {showAlert && (
+        <div className="fixed top-0 left-0 w-full bg-yellow-400 text-black p-2 text-center z-50">
+          Please switch to mobile view for better experience (width ≤ 768px)
+        </div>
+      )}
         <div className="bg-cover bg-center bg-[url(https://images.unsplash.com/photo-1615929361868-2e41ea1befaf?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dWJlcnxlbnwwfHwwfHx8MA%3D%3D)] h-screen pt-8 flex justify-between flex-col bg-red-400 w-full">
         <img className="w-14 ml-9" src="https://upload.wikimedia.org/wikipedia/commons/c/cc/Uber_logo_2018.png" alt="" />
             <div className='bg-white pb-7 py-4 px-4'>
